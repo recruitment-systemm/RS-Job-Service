@@ -1,0 +1,14 @@
+CREATE TYPE job_status AS ENUM ('DRAFT', 'OPEN', 'CLOSED');
+
+CREATE TABLE jobs (
+id UUID PRIMARY KEY,
+organization_id UUID NOT NULL,
+created_by UUID NOT NULL,
+title VARCHAR(255) NOT NULL,
+description TEXT NOT NULL,
+address VARCHAR(255) NOT NULL,
+latitude DECIMAL(9,6) NOT NULL CHECK (latitude BETWEEN -90 AND 90),
+longitude DECIMAL(9,6) NOT NULL CHECK (longitude BETWEEN -180 AND 180),
+status job_status  NOT NULL DEFAULT 'DRAFT',
+created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
