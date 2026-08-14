@@ -28,8 +28,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/jobs").hasRole("HR")
                         .requestMatchers(HttpMethod.GET, "/api/v1/jobs/organization").hasRole("HR")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/jobs/*/status").hasRole("HR")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/jobs/**").hasRole("HR")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/jobs/**").hasRole("HR")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
