@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -38,6 +39,25 @@ public class JobService {
         JobResponse response = toResponse(savedJob);
         return response;
     }
+
+    @Transactional(readOnly = true)
+    public List<JobResponse> getOpenJobs() {
+        return jobRepository.findByStatus(JobStatus.OPEN).stream().map(this::toResponse).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<JobResponse> getOrganizationJobs(UUID organizationId) {
+        return jobRepository.findByOrganizationId(organizationId).stream().map(this::toResponse).toList();
+    }
+
+    @Transactional
+    public JobResponse updateStatus(UUID organizationId, UUID jobId, JobStatus newStatus) {
+        JobEntity job = jobRepository.findByIdAndOrganizationId(jobId, organizationId).orElseThrow(() -> new RuntimeException("Job not found"));
+        job.setStatus(newStatus);
+        JobEntity savedJob = jobRepository.save(job);
+        return toResponse(savedJob);
+    }
+
 
     private JobResponse toResponse(JobEntity job) {
         return JobResponse.builder()
