@@ -5,6 +5,7 @@ import org.example.jobservice.dto.request.CreateJobRequest;
 import org.example.jobservice.dto.response.JobResponse;
 import org.example.jobservice.entity.JobEntity;
 import org.example.jobservice.entity.JobStatus;
+import org.example.jobservice.exception.JobNotFoundException;
 import org.example.jobservice.repository.JobRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +53,7 @@ public class JobService {
 
     @Transactional
     public JobResponse updateStatus(UUID organizationId, UUID jobId, JobStatus newStatus) {
-        JobEntity job = jobRepository.findByIdAndOrganizationId(jobId, organizationId).orElseThrow(() -> new RuntimeException("Job not found"));
+        JobEntity job = jobRepository.findByIdAndOrganizationId(jobId, organizationId).orElseThrow(() -> new JobNotFoundException("Job not found"));
         job.setStatus(newStatus);
         JobEntity savedJob = jobRepository.save(job);
         return toResponse(savedJob);

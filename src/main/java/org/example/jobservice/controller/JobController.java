@@ -3,6 +3,7 @@ package org.example.jobservice.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.jobservice.dto.request.CreateJobRequest;
+import org.example.jobservice.dto.response.ApiResponse;
 import org.example.jobservice.dto.response.JobResponse;
 import org.example.jobservice.entity.JobStatus;
 import org.example.jobservice.service.JobService;
@@ -24,28 +25,30 @@ public class JobController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('HR')")
-    public JobResponse createJob(@Valid @RequestBody CreateJobRequest request, Authentication authentication) {
+    public ApiResponse<JobResponse> createJob(@Valid @RequestBody CreateJobRequest request, Authentication authentication) {
         UUID employeeId = (UUID) authentication.getPrincipal();
         UUID organizationId = UUID.fromString(authentication.getDetails().toString());
-        return jobService.createJob(organizationId, employeeId, request);
+        JobResponse response = jobService.createJob(organizationId, employeeId, request);
+        return ApiResponse.success(HttpStatus.CREATED.value(), "Job created successfully", response);
     }
 
     @GetMapping
-    public List<JobResponse> getOpenJobs() {
-        return jobService.getOpenJobs();
+    public ApiResponse<List<JobResponse>> getOpenJobs() {
+        return ApiResponse.success(HttpStatus.OK.value(), "Open jobs retrieved successfully", jobService.getOpenJobs());
     }
 
     @GetMapping("/organization")
     @PreAuthorize("hasRole('HR')")
-    public List<JobResponse> getOrganizationJobs(Authentication authentication) {
+    public ApiResponse<List<JobResponse>> getOrganizationJobs(Authentication authentication) {
         UUID organizationId = UUID.fromString(authentication.getDetails().toString());
-        return jobService.getOrganizationJobs(organizationId);
+        return ApiResponse.success(HttpStatus.OK.value(), "Organization jobs retrieved successfully", jobService.getOrganizationJobs(organizationId));
     }
 
     @PatchMapping("/{jobId}/status")
     @PreAuthorize("hasRole('HR')")
-    public JobResponse updateStatus(@PathVariable UUID jobId, @RequestParam JobStatus status, Authentication authentication) {
+    public ApiResponse<JobResponse> updateStatus(@PathVariable UUID jobId, @RequestParam JobStatus status, Authentication authentication) {
         UUID organizationId = UUID.fromString(authentication.getDetails().toString());
-        return jobService.updateStatus(organizationId, jobId, status);
+        JobResponse response = jobService.updateStatus(organizationId, jobId, status);
+        return ApiResponse.success(HttpStatus.OK.value(), "Job status updated successfully", response);
     }
 }
