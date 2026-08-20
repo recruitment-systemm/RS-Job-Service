@@ -44,6 +44,12 @@ public class JobController {
         return ApiResponse.success(HttpStatus.OK.value(), "Organization jobs retrieved successfully", jobService.getOrganizationJobs(organizationId));
     }
 
+    @GetMapping("/admin/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<List<JobResponse>> getAllJobs() {
+        return ApiResponse.success(HttpStatus.OK.value(), "All jobs retrieved successfully", jobService.getAllJobs());
+    }
+
     @PatchMapping("/{jobId}/status")
     @PreAuthorize("hasRole('HR')")
     public ApiResponse<JobResponse> updateStatus(@PathVariable UUID jobId, @RequestParam JobStatus status, Authentication authentication) {

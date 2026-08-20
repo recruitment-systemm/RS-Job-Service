@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String sessionId = claims.get("sessionId", String.class);
             String tokenType = claims.get("type", String.class);
 
-            if (subject == null || organizationIdClaim == null || role == null || sessionId == null || tokenType == null) {
+            if (subject == null || role == null || sessionId == null || tokenType == null) {
                 sendUnauthorized(response, "Invalid token claims");
                 return;
             }
@@ -64,8 +64,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
+            if (!"ADMIN".equalsIgnoreCase(role) && organizationIdClaim == null) {
+                sendUnauthorized(response, "Invalid token claims");
+                return;
+            }
+
             UUID employeeId = UUID.fromString(subject);
-            UUID organizationId = UUID.fromString(organizationIdClaim);
+            UUID organizationId = organizationIdClaim != null ? UUID.fromString(organizationIdClaim) : null;
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(employeeId, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())));
             authentication.setDetails(organizationId);
             SecurityContextHolder.getContext().setAuthentication(authentication);

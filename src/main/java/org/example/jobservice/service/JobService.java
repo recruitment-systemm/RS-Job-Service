@@ -51,6 +51,11 @@ public class JobService {
         return jobRepository.findByOrganizationId(organizationId).stream().map(this::toResponse).toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<JobResponse> getAllJobs() {
+        return jobRepository.findAll().stream().map(this::toResponse).toList();
+    }
+
     @Transactional
     public JobResponse updateStatus(UUID organizationId, UUID jobId, JobStatus newStatus) {
         JobEntity job = jobRepository.findByIdAndOrganizationId(jobId, organizationId).orElseThrow(() -> new JobNotFoundException("Job not found"));
