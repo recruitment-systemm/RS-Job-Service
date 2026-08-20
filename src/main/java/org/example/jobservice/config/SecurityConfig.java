@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/docs", "/docs/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/jobs").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/jobs").hasRole("HR")
                         .requestMatchers(HttpMethod.GET, "/api/v1/jobs/organization").hasRole("HR")
