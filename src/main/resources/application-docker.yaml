@@ -1,0 +1,8 @@
+spring:
+  config:
+    activate:
+      on-profile:
+        - docker
+
+  datasource:
+    url: jdbc:postgresql://job-postgres:5432/job-service
